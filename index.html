@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yetim Atlar 🐴</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --neon-pink: #ff00ff;
+        --neon-blue: #00ffff;
+    }
+
+    body {
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        background-attachment: fixed;
+        color: white;
+        text-align: center;
+        overflow-x: hidden;
+    }
+
+    /* GLASSMORPHISM KARTLARI */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 600px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        transition: transform 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+    }
+
+    #loader {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        font-size: 24px;
+    }
+
+    .hidden { opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+
+    .glow-text {
+        font-weight: 900;
+        text-transform: uppercase;
+        animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+        from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--neon-pink); }
+        to { text-shadow: 0 0 10px #fff, 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue); }
+    }
+
+    button {
+        padding: 15px 30px;
+        margin: 10px;
+        background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue));
+        border: none;
+        color: white;
+        font-family: 'Poppins', sans-serif;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 50px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 15px rgba(255, 0, 255, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    button:hover {
+        transform: scale(1.1) rotate(-2deg);
+        box-shadow: 0 4px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    /* XOX TAHTASI */
+    #board {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .cell {
+        width: 100px;
+        height: 100px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 2px solid var(--neon-pink);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 50px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .cell:hover {
+        background: rgba(255, 0, 255, 0.2);
+        box-shadow: 0 0 15px var(--neon-pink);
+    }
+
+    .social-links p {
+        background: rgba(0,0,0,0.3);
+        padding: 10px;
+        border-radius: 10px;
+        display: inline-block;
+        margin: 5px;
+        border-left: 3px solid var(--neon-blue);
+    }
+
+    /* AT YAĞMURU EFEKTİ */
+    .falling-horse {
+        position: fixed;
+        font-size: 40px;
+        top: -50px;
+        z-index: 1000;
+        animation: fall linear forwards;
+        pointer-events: none;
+    }
+
+    @keyframes fall {
+        to { transform: translateY(100vh) rotate(360deg); }
+    }
+
+    /* TİTREŞİM EFEKTİ */
+    .shake {
+        animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    .crypto-ticker {
+        font-family: monospace;
+        color: #0f0;
+        background: #000;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 15px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="loader">
+    <div class="glow-text" style="font-size: 50px;">🐴 ❤️ 🦄</div>
+    <div style="color: var(--neon-blue); margin-top: 20px;">SİSTEME SIZILIYOR...</div>
+    <div id="loading-text" style="font-family: monospace; font-size: 14px; margin-top: 10px; color: #0f0;">
+        > Atlar koşuşa hazırlanıyor...<br>
+        > Atlar delirdi...<br>
+        > At Hazır.
+    </div>
+    <p class="glow-text">YETİM ATLAR TOPLULUĞU</p>
+</div>
+
+<div id="main" class="hidden">
+
+    <h1 class="glow-text" style="font-size: 3em; margin-top: 40px;">🐴 YETİM ATLAR 🦄</h1>
+    <p><i>"Çünkü normal olmak çok sıkıcı."</i></p>
+
+    <div class="glass-card">
+        <h2 style="color: var(--neon-pink);">📜 Vizyonumuz (Yok)</h2>
+        <p>
+            Biz sıradan bir topluluk değiliz. Biz durduk yere at emojisi atan, 
+            kötü fikirleri harika projelermiş gibi savunan, block legendin en gereksiz ama elit grubuyuz.
+        </p>
+        <p style="color: #bbb; font-size: 14px;">
+            Kurallar: Ciddiyet yasaktır. Mantık opsiyoneldir. 🐴 kutsaldır.
+        </p>
+        <div style="font-size: 12px; margin-top: 15px; color: var(--neon-blue);">
+             ÜYELER: S1BLACKMAN - SUNNYFEL - ELECTUS - S1WHİTEMAN - HAPPY
+        </div>
+    </div>
+
+    <div class="glass-card">
+        <h2 style="color: var(--neon-blue);">🪙 Kaderini Belirle</h2>
+        <p>Sıradan yazı tura çok demode. Yetim Atlar parası asla normal düşmez.</p>
+        <button onclick="coin()">Fırlat Bakalım</button>
+        <h3 id="coinResult" style="min-height: 30px; font-size: 24px;"></h3>
+    </div>
+
+    <div class="glass-card">
+        <h2 style="color: var(--neon-pink);">⚔️ Yapay Zek-AT'a Karşı (XOX)</h2>
+        <p>Sen (🐴) vs Zeka Küpü (🦄)</p>
+        <div id="board"></div>
+        <h3 id="status" class="glow-text" style="margin-top: 20px; min-height: 30px;"></h3>
+        <button onclick="resetGame()">Yeniden Oyna</button>
+    </div>
+
+    <div class="glass-card">
+        <h2 style="color: yellow;">GÖKTEN AT YAĞIYOR.</h2>
+        <p>Aşağıdaki butona basarsan sorumluluk kabul etmiyoruz.</p>
+        <button onclick="makeItRain()" style="background: red; box-shadow: 0 0 20px red;">KAOSU BAŞLAT</button>
+    </div>
+
+    <div class="glass-card social-links">
+        <h2 style="color: var(--neon-blue);">📡 İletişim & Borsa</h2>
+        <p>🎵 TikTok: <b>@tombulyanakavcisi</b> | <b>@tacbende</b></p><br>
+        <p>✈️ Telegram: <b>@jzozn</b> | <b>@stargodx</b></p>
+        
+        <div class="crypto-ticker">
+            YetimCoin ($YTM): <span id="crypto-val">0.00000001</span> BTC 📉
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // LOADER MANTIĞI
+    setTimeout(() => {
+        document.getElementById("loader").style.opacity = "0";
+        setTimeout(() => {
+            document.getElementById("loader").style.display = "none";
+            let main = document.getElementById("main");
+            main.classList.remove("hidden");
+            main.style.opacity = "1";
+        }, 500);
+    }, 3500);
+
+    // TROLL YAZI TURA
+    function coin() {
+        let r = Math.random();
+        let result = "";
+        
+        // %5 ihtimalle dik gelir
+        if (r < 0.05) {
+            result = "DİK GELDİ! 😱 (Bugün şanslı günün)";
+        } else if (r < 0.5) {
+            result = "Yazı (🐴)";
+        } else {
+            result = "Tura (🦄)";
+        }
+        
+        let coinEl = document.getElementById("coinResult");
+        coinEl.innerText = "Dönüyor...";
+        setTimeout(() => {
+            coinEl.innerText = result;
+        }, 800);
+    }
+
+    // TROLL XOX (At vs Tekboynuz)
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let gameActive = true;
+    const playerIcon = "🐴";
+    const aiIcon = "🦄";
+
+    function createBoard() {
+        let boardDiv = document.getElementById("board");
+        boardDiv.innerHTML = "";
+        board.forEach((v, i) => {
+            let cell = document.createElement("div");
+            cell.className = "cell";
+            cell.innerText = v;
+            cell.onclick = () => move(i);
+            boardDiv.appendChild(cell);
+        });
+    }
+
+    function move(i) {
+        if (board[i] !== "" || !gameActive) return;
+        board[i] = playerIcon;
+        createBoard();
+        check(playerIcon);
+        
+        if(gameActive) {
+            setTimeout(aiMove, 300); // AI biraz düşünsün
+        }
+    }
+
+    function aiMove() {
+        let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+        if (empty.length === 0) {
+            if(gameActive) {
+                document.getElementById("status").innerText = "Berabere! İkiniz de atsınız.";
+                gameActive = false;
+            }
+            return;
+        }
+        let r = empty[Math.floor(Math.random() * empty.length)];
+        board[r] = aiIcon;
+        createBoard();
+        check(aiIcon);
+    }
+
+    function check(lastPlayer) {
+        let win = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Yatay
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Dikey
+            [0, 4, 8], [2, 4, 6]             // Çapraz
+        ];
+        
+        for (let w of win) {
+            let [a, b, c] = w;
+            if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                let winnerText = lastPlayer === playerIcon ? "KAZANDIN!Mal AT" : "YAPAY ZEK-AT KAZANDI!";
+                document.getElementById("status").innerText = winnerText;
+                gameActive = false;
+                return;
+            }
+        }
+
+        if(!board.includes("") && gameActive) {
+            document.getElementById("status").innerText = "Berabere! Ot bile yiyemezsiniz.";
+            gameActive = false;
+        }
+    }
+
+    function resetGame() {
+        board = ["", "", "", "", "", "", "", "", ""];
+        gameActive = true;
+        document.getElementById("status").innerText = "";
+        createBoard();
+    }
+
+    createBoard();
+
+    // KAOS BUTONU (AT YAĞMURU)
+    function makeItRain() {
+        document.body.classList.add('shake');
+        setTimeout(() => document.body.classList.remove('shake'), 500);
+
+        for (let i = 0; i < 30; i++) {
+            setTimeout(() => {
+                let horse = document.createElement("div");
+                horse.innerHTML = Math.random() > 0.5 ? "🐴" : "🦄";
+                horse.className = "falling-horse";
+                horse.style.left = Math.random() * 100 + "vw";
+                horse.style.animationDuration = (Math.random() * 2 + 1) + "s";
+                document.body.appendChild(horse);
+                
+                // Animasyon bitince temizle
+                setTimeout(() => horse.remove(), 3000);
+            }, i * 100);
+        }
+    }
+
+    // SAHTE KRİPTO BORSA ANİMASYONU
+    setInterval(() => {
+        let val = (Math.random() * 0.00000005).toFixed(8);
+        document.getElementById("crypto-val").innerText = val;
+    }, 2000);
+
+</script>
+
+</body>
+</html>
